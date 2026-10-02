@@ -1,0 +1,28 @@
+# Container and build artifacts
+*.sif
+*.img
+Dockerfile
+Singularity.def
+build/
+dist/
+
+# Spack-generated installation trees
+spack/opt/
+spack/var/
+*.log
+
+# Experiment outputs that may be large or contain scheduler details
+results/raw/
+results/plots/
+*.out
+*.err
+
+# Local Python tooling
+.venv/
+__pycache__/
+*.py[cod]
+
+# Editors and OS files
+.DS_Store
+.idea/
+.vscode/
