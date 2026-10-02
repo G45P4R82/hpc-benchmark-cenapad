@@ -1,21 +1,19 @@
-# Container and build artifacts
+# Container images and temporary build artifacts
 *.sif
 *.img
-Dockerfile
-Singularity.def
-build/
-dist/
+container/build/
+container/dist/
 
 # Spack-generated installation trees
 spack/opt/
 spack/var/
-*.log
+*.install.log
 
 # Experiment outputs that may be large or contain scheduler details
-results/raw/
-results/plots/
-*.out
-*.err
+results/raw/*.tmp
+results/plots/*.tmp
+*.pbs.o*
+*.pbs.e*
 
 # Local Python tooling
 .venv/
@@ -26,3 +24,6 @@ __pycache__/
 .DS_Store
 .idea/
 .vscode/
+
+# Keep reproducibility artifacts and benchmark logs under version control.
+# Do not commit credentials or private cluster configuration.

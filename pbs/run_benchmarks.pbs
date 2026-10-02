@@ -1,0 +1,69 @@
+#!/usr/bin/env bash
+#PBS -N osu-cenapad
+#PBS -l select=2:ncpus=1
+#PBS -j oe
+
+set -euo pipefail
+
+ROOT_DIR="${PROJECT_ROOT:?Defina PROJECT_ROOT antes de qsub}"
+RESULT_DIR="${RESULT_DIR:-${ROOT_DIR}/results/raw/job-${PBS_JOBID:-local}}"
+mkdir -p "$RESULT_DIR"
+
+MPIEXEC="${MPIEXEC:-mpiexec}"
+MPIEXEC_EXTRA_ARGS="${MPIEXEC_EXTRA_ARGS:--f ${PBS_NODEFILE:-}}"
+OSU_BW="${OSU_BW:?Defina caminho para osu_bw nativo}"
+OSU_LATENCY="${OSU_LATENCY:?Defina caminho para osu_latency nativo}"
+CONTAINER_IMAGE="${CONTAINER_IMAGE:?Defina caminho para a imagem .sif}"
+CONTAINER_OSU_BW="${CONTAINER_OSU_BW:-/opt/cenapad/osu/libexec/osu-micro-benchmarks/mpi/pt2pt/osu_bw}"
+CONTAINER_OSU_LATENCY="${CONTAINER_OSU_LATENCY:-/opt/cenapad/osu/libexec/osu-micro-benchmarks/mpi/pt2pt/osu_latency}"
+REPETITIONS="${REPETITIONS:-3}"
+BENCHMARK_ARGS="${BENCHMARK_ARGS:--m 1:67108864 -x 100 -i 1000}"
+CONTAINER_BINDS="${CONTAINER_BINDS:-/dev/infiniband:/dev/infiniband}"
+
+read -r -a EXTRA_ARGS <<< "$MPIEXEC_EXTRA_ARGS"
+
+run_diagnostics() {
+    {
+        date -u +%FT%TZ
+        hostname -f 2>/dev/null || hostname
+        printf 'PBS_JOBID=%s\nPBS_NODEFILE=%s\n' "${PBS_JOBID:-}" "${PBS_NODEFILE:-}"
+        env | sort | grep -E '^(PATH|LD_LIBRARY_PATH|UCX_|MPICH_|HYDRA_|PBS_)' || true
+        command -v mpichversion && mpichversion || true
+        command -v ucx_info && ucx_info -v || true
+        command -v ibstat && ibstat || true
+        command -v ibv_devinfo && ibv_devinfo || true
+    } > "${RESULT_DIR}/run-environment.txt" 2>&1
+}
+
+run_one() {
+    local scenario="$1" benchmark="$2" repetition="$3" executable="$4" output="$5"
+    local command_line
+    if [[ "$scenario" == container ]]; then
+        command_line=("$MPIEXEC" "${EXTRA_ARGS[@]}" apptainer exec --bind "$CONTAINER_BINDS" "$CONTAINER_IMAGE" "$executable" $BENCHMARK_ARGS)
+    else
+        command_line=("$MPIEXEC" "${EXTRA_ARGS[@]}" "$executable" $BENCHMARK_ARGS)
+    fi
+    {
+        printf '# scenario=%s benchmark=%s repetition=%s\n' "$scenario" "$benchmark" "$repetition"
+        printf '# command='; printf '%q ' "${command_line[@]}"; printf '\n'
+        "${command_line[@]}"
+    } > "$output" 2>&1
+}
+
+run_diagnostics
+
+for benchmark in bw latency; do
+    if [[ "$benchmark" == bw ]]; then
+        native_bin="$OSU_BW"
+        container_bin="$CONTAINER_OSU_BW"
+    else
+        native_bin="$OSU_LATENCY"
+        container_bin="$CONTAINER_OSU_LATENCY"
+    fi
+    for repetition in $(seq 1 "$REPETITIONS"); do
+        run_one native "$benchmark" "$repetition" "$native_bin" "${RESULT_DIR}/native_${benchmark}_rep$(printf '%02d' "$repetition").out"
+        run_one container "$benchmark" "$repetition" "$container_bin" "${RESULT_DIR}/container_${benchmark}_rep$(printf '%02d' "$repetition").out"
+    done
+done
+
+printf 'Results saved to %s\n' "$RESULT_DIR"

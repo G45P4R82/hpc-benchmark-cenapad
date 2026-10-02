@@ -1,0 +1,12 @@
+spack:
+  specs:
+  # Replace this with the concretized spec selected after `spack info mpich`.
+  # Example shape only; MPICH variant names are Spack-version dependent.
+  - mpich@<MPICH_VERSION> %gcc@<GCC_VERSION> fabrics=ucx
+  view: false
+  concretizer:
+    unify: true
+  packages:
+    all:
+      providers:
+        mpi: [mpich]

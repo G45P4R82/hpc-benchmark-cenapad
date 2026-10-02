@@ -1,6 +1,8 @@
 # HPC Benchmark CENAPAD
 
 Experimento reprodutível para comparar os OSU Micro-Benchmarks executados
+diretamente no host e em um contêiner Apptainer/Singularity, usando MPICH
+com CH4/UCX sobre a rede InfiniBand HDR100 do CENAPAD.
 
 ## Objetivos
 
@@ -38,3 +40,13 @@ do cluster.
 ## Reprodução
 
 Os comandos definitivos serão documentados em [`docs/experimental-plan.md`](docs/experimental-plan.md)
+e em [`docs/execution-guide.md`](docs/execution-guide.md). A execução começa
+sempre pelo inventário do cluster:
+
+```bash
+bash scripts/collect_environment.sh
+bash scripts/check_infiniband.sh
+```
+
+Depois, siga o guia de execução. Os arquivos `spack/spack.lock`, logs, dados e
+gráficos somente devem ser preenchidos com resultados reais do cluster.
