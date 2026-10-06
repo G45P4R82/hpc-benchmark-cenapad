@@ -1,0 +1,43 @@
+Compute-node inventory (sanitized)
+==================================
+
+This is a public, sanitized summary of a successful single-node PBS
+collection. Hostnames, user names, home paths, GUIDs and internal addresses
+are intentionally omitted.
+
+PBS queue: testes
+PBS allocation: one node, four CPUs
+Collection result: Exit_status=0
+
+Operating system: AlmaLinux 8.10
+Kernel: 4.18.0-553.150.1.el8_10.x86_64
+Architecture: x86_64
+CPU: AMD EPYC 7443, 48 logical CPUs, 2 sockets, 8 NUMA nodes
+GCC: 8.5.0
+
+InfiniBand:
+- Adapter: mlx5_0
+- Port 1: ACTIVE, LinkUp
+- Link rate: 100 Gb/s
+- Link layer: InfiniBand
+- Firmware: 20.43.3608
+- RDMA link: ACTIVE / LINK_UP
+
+UCX:
+- Version: 1.15.0
+- RDMA transports detected: rc_mlx5, dc_mlx5 and ud_mlx5
+- TCP transports were also visible as fallback transports
+
+Userspace RDMA packages:
+- rdma-core 48.0-1.el8.x86_64
+- libibverbs 48.0-1.el8.x86_64
+- librdmacm 48.0-1.el8.x86_64
+- infiniband-diags 48.0-1.el8.x86_64
+- Runtime libraries are provided under /lib64
+
+Unavailable commands on this compute node:
+- ibv_devinfo
+- ofed_info
+- spack
+
+No benchmark or MPI communication test was executed.
