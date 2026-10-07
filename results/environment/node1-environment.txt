@@ -1,8 +1,8 @@
-Compute node inventory: node0 (hostname sanitized)
+Compute node inventory: node1 (hostname sanitized)
 ===============================================
 
-Attaching 1547027 to 1027757.ada
-node=node0
+Attaching 2200839 to 1027757.ada
+node=node1
 
 ===== MPI launcher =====
 /opt/pbs/bin/mpiexec
@@ -27,12 +27,12 @@ CA 'mlx5_0'
 		State: Active
 		Physical state: LinkUp
 		Rate: 100
-		Base lid: 79
+		Base lid: 9
 		LMC: 0
 		SM lid: 1
 		Capability mask: 0xa659e848
 		Link layer: InfiniBand
-link mlx5_0/1 subnet_prefix fe80:0000:0000:0000 lid 79 sm_lid 1 lmc 0 state ACTIVE physical_state LINK_UP
+link mlx5_0/1 subnet_prefix fe80:0000:0000:0000 lid 9 sm_lid 1 lmc 0 state ACTIVE physical_state LINK_UP
 # Library version: 1.15.0
 # Library path: /lib64/libucs.so.0
 # API headers version: 1.15.0
@@ -87,33 +87,6 @@ link mlx5_0/1 subnet_prefix fe80:0000:0000:0000 lid 79 sm_lid 1 lmc 0 state ACTI
 #         memory types: host (access,reg_nonblock,reg,cache)
 #
 #      Transport: tcp
-#         Device: eno33np0.123
-#           Type: network
-#  System device: eno33np0.123 (0)
-#
-#      capabilities:
-#            bandwidth: 1181.80/ppn + 0.00 MB/sec
-#              latency: 5258 nsec
-#             overhead: 50000 nsec
-#            put_zcopy: <= 18446744073709551590, up to 6 iov
-#  put_opt_zcopy_align: <= 1
-#        put_align_mtu: <= 0
-#             am_short: <= 8K
-#             am_bcopy: <= 8K
-#             am_zcopy: <= 64K, up to 6 iov
-#   am_opt_zcopy_align: <= 1
-#         am_align_mtu: <= 0
-#            am header: <= 8037
-#           connection: to ep, to iface
-#      device priority: 1
-#     device num paths: 1
-#              max eps: 256
-#       device address: 6 bytes
-#        iface address: 2 bytes
-#           ep address: 10 bytes
-#       error handling: peer failure, ep_check, keepalive
-#
-#      Transport: tcp
 #         Device: lo
 #           Type: network
 #  System device: <unknown>
@@ -143,38 +116,11 @@ link mlx5_0/1 subnet_prefix fe80:0000:0000:0000 lid 79 sm_lid 1 lmc 0 state ACTI
 #      Transport: tcp
 #         Device: eno33np0.1010
 #           Type: network
-#  System device: eno33np0.123 (0)
+#  System device: eno33np0.1010 (0)
 #
 #      capabilities:
 #            bandwidth: 1181.80/ppn + 0.00 MB/sec
 #              latency: 5258 nsec
-#             overhead: 50000 nsec
-#            put_zcopy: <= 18446744073709551590, up to 6 iov
-#  put_opt_zcopy_align: <= 1
-#        put_align_mtu: <= 0
-#             am_short: <= 8K
-#             am_bcopy: <= 8K
-#             am_zcopy: <= 64K, up to 6 iov
-#   am_opt_zcopy_align: <= 1
-#         am_align_mtu: <= 0
-#            am header: <= 8037
-#           connection: to ep, to iface
-#      device priority: 1
-#     device num paths: 1
-#              max eps: 256
-#       device address: 6 bytes
-#        iface address: 2 bytes
-#           ep address: 10 bytes
-#       error handling: peer failure, ep_check, keepalive
-#
-#      Transport: tcp
-#         Device: ib0
-#           Type: network
-#  System device: <unknown>
-#
-#      capabilities:
-#            bandwidth: 2200.00/ppn + 0.00 MB/sec
-#              latency: 5206 nsec
 #             overhead: 50000 nsec
 #            put_zcopy: <= 18446744073709551590, up to 6 iov
 #  put_opt_zcopy_align: <= 1
@@ -214,6 +160,60 @@ link mlx5_0/1 subnet_prefix fe80:0000:0000:0000 lid 79 sm_lid 1 lmc 0 state ACTI
 #            am header: <= 8037
 #           connection: to ep, to iface
 #      device priority: 0
+#     device num paths: 1
+#              max eps: 256
+#       device address: 6 bytes
+#        iface address: 2 bytes
+#           ep address: 10 bytes
+#       error handling: peer failure, ep_check, keepalive
+#
+#      Transport: tcp
+#         Device: idrac
+#           Type: network
+#  System device: <unknown>
+#
+#      capabilities:
+#            bandwidth: 48.09/ppn + 0.00 MB/sec
+#              latency: 6555 nsec
+#             overhead: 50000 nsec
+#            put_zcopy: <= 18446744073709551590, up to 6 iov
+#  put_opt_zcopy_align: <= 1
+#        put_align_mtu: <= 0
+#             am_short: <= 8K
+#             am_bcopy: <= 8K
+#             am_zcopy: <= 64K, up to 6 iov
+#   am_opt_zcopy_align: <= 1
+#         am_align_mtu: <= 0
+#            am header: <= 8037
+#           connection: to ep, to iface
+#      device priority: 1
+#     device num paths: 1
+#              max eps: 256
+#       device address: 6 bytes
+#        iface address: 2 bytes
+#           ep address: 10 bytes
+#       error handling: peer failure, ep_check, keepalive
+#
+#      Transport: tcp
+#         Device: ib0
+#           Type: network
+#  System device: <unknown>
+#
+#      capabilities:
+#            bandwidth: 2200.00/ppn + 0.00 MB/sec
+#              latency: 5206 nsec
+#             overhead: 50000 nsec
+#            put_zcopy: <= 18446744073709551590, up to 6 iov
+#  put_opt_zcopy_align: <= 1
+#        put_align_mtu: <= 0
+#             am_short: <= 8K
+#             am_bcopy: <= 8K
+#             am_zcopy: <= 64K, up to 6 iov
+#   am_opt_zcopy_align: <= 1
+#         am_align_mtu: <= 0
+#            am header: <= 8037
+#           connection: to ep, to iface
+#      device priority: 1
 #     device num paths: 1
 #              max eps: 256
 #       device address: 6 bytes
@@ -268,7 +268,7 @@ link mlx5_0/1 subnet_prefix fe80:0000:0000:0000 lid 79 sm_lid 1 lmc 0 state ACTI
 #
 # Memory domain: posix
 #     Component: posix
-#             allocate: <= 263629944K
+#             allocate: <= 263629948K
 #           remote key: 24 bytes
 #           rkey_ptr is supported
 #         memory types: host (access,alloc,cache)
@@ -493,3 +493,5 @@ link mlx5_0/1 subnet_prefix fe80:0000:0000:0000 lid 79 sm_lid 1 lmc 0 state ACTI
 ===== Singularity =====
 singularity version 3.8.5-2.el8
 bash: line 7: apptainer: command not found
+
+finished=2026-10-07T03:39:39Z

@@ -1,24 +1,13 @@
 # MPI and PBS Collection Status
 
-## First two-node allocation
+The corrected job `1027757.ada` completed with `Exit_status=0`.
 
-Job `1027399.ada` was accepted by the `paralela` queue with two chunks of 128
-CPUs and `scatter:exclhost` placement. PBS allocated two distinct compute
-hosts. The allocation was therefore valid for the host-separation check.
+- Queue: `paralela`.
+- Allocation: two chunks of 128 CPUs.
+- Placement: `scatter:exclhost`.
+- Two distinct compute nodes were allocated and collected.
+- SSH collection used `StrictHostKeyChecking=no` and an isolated known-hosts file because the first attempt failed on host-key verification.
 
-The per-node collection did not complete because SSH host-key verification
-failed for both allocated hosts. The job exited with status zero only because
-the diagnostic script intentionally tolerated command failures. Its output
-must not be treated as a valid MPI or node inventory.
+The first attempt obtained two nodes but did not collect their data. Its zero exit status was not evidence of success because the script tolerated SSH failures. The corrected job is the authoritative two-node inventory.
 
-## Corrected collection
-
-Job `1027757.ada` repeats the same two-node collection with
-`StrictHostKeyChecking=no` and an isolated known-hosts file for the allocated
-hosts. It is queued in `paralela`; its output is not available yet.
-
-## RDMA collection
-
-Job `1027401.ada` remains queued in `parexp` for the RDMA, OFED, firmware,
-driver and library-path collection.
-
+No MPI communication benchmark was run.

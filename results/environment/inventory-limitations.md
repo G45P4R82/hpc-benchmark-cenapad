@@ -1,24 +1,22 @@
 # Inventory Limitations
 
-This PR records the sanitized information collected before installation or
-benchmarking.
+The inventory now contains two distinct compute nodes and a successful PBS
+allocation. All public files are sanitized.
 
-## Successful collection
+## Observable data
 
-- One compute-node job in `testes` completed with `Exit_status=0`.
-- AlmaLinux 8.10, GCC 8.5.0 and AMD EPYC 7443 were recorded.
-- InfiniBand `mlx5_0`, port ACTIVE/LINK_UP, 100 Gb/s, firmware 20.43.3608.
-- UCX 1.15.0 detected `rc_mlx5`, `dc_mlx5` and `ud_mlx5`.
-- RDMA userspace packages were version 48.0-1.el8.x86_64.
+- Two-node PBS allocation with scatter:exclhost.
+- PBS 22.05.11 and /opt/pbs/bin/mpiexec.
+- InfiniBand, UCX, GCC, Singularity and per-node environment data.
+- Spack 0.20.0.dev0, MPICH metadata and UCX metadata.
 
-## Problems
+## Still pending or not observable
 
-- The two-node parexp job waited for resources and exceeded its walltime.
-- PBS assigned the same host to both chunks, so it was not two-node evidence.
-- The testes queue repeatedly selected the same shared compute node.
-- Host requests for other nodes were rejected by the testes Qlist.
-- `module avail` blocked one diagnostic job and was removed from the run.
-- `ibv_devinfo`, `ofed_info` and Spack were unavailable on the node.
+- The RDMA/OFED job 1027401.ada is still queued. Its output must provide
+  libmlx5, libibverbs, librdmacm, headers, paths, driver and firmware details.
+- The MPICH concretization job is still running; no install has been done.
+- Administrative policy for fakeroot, build services and container binds is
+  not observable with the user account. This is documented as unknown rather
+  than invented.
 
-## Consequence
-
+No benchmark, installation, OSU compilation or container build was performed.

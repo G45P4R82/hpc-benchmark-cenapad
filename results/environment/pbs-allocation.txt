@@ -1,12 +1,14 @@
 PBS allocation records (sanitized)
 ==================================
 
-The two-node parexp request waited for resources, received the same host in
-both chunks, and was aborted by PBS after exceeding its 10-minute walltime.
-Exit status: -29.
+The authoritative two-node allocation is job 1027757.ada in queue paralela.
+It used two chunks of 128 CPUs with scatter:exclhost placement and collected
+both nodes successfully.
 
-Two successful fallback jobs ran in the testes queue with one node and four
-CPUs each: 1025654.ada and 1027387.ada. Both used the same compute node.
+The earlier parexp attempt exceeded walltime. The first paralela attempt got
+two nodes but failed SSH host-key verification; it is retained only as a
+historical failure. The corrected job used an isolated known-hosts file.
 
-The testes Qlist does not expose other CPU nodes. Host-specific requests for
-other nodes were rejected. This PR therefore contains one distinct node only.
+The testes queue was used for short software and Spack discovery jobs. It is
+single-node and repeatedly selected the same shared node, so it was not used
+as evidence for inter-node communication.
