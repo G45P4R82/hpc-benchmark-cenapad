@@ -1,0 +1,14 @@
+PBS allocation records (sanitized)
+==================================
+
+The authoritative two-node allocation is job 1027757.ada in queue paralela.
+It used two chunks of 128 CPUs with scatter:exclhost placement and collected
+both nodes successfully.
+
+The earlier parexp attempt exceeded walltime. The first paralela attempt got
+two nodes but failed SSH host-key verification; it is retained only as a
+historical failure. The corrected job used an isolated known-hosts file.
+
+The testes queue was used for short software and Spack discovery jobs. It is
+single-node and repeatedly selected the same shared node, so it was not used
+as evidence for inter-node communication.
