@@ -1,0 +1,17 @@
+Offline CENAPAD bundle manifest
+
+base_image=ubuntu-24.04.sif
+gcc_version=9.4.0
+mpich_version=4.1.1
+mpich_device=ch4
+mpich_netmod=ucx
+ucx_version=1.15.0
+osu_version=7.5.2
+rdma_userspace=rdma-core-<VERSION>
+
+# Fill SHA256 values after collecting the bundle. Do not add private paths.
+sha256_base_image=<SHA256>
+sha256_mpich=<SHA256>
+sha256_ucx=<SHA256>
+sha256_osu=<SHA256>
+sha256_rdma=<SHA256>
