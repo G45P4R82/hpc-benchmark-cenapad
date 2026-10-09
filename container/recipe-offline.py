@@ -20,7 +20,7 @@ Stage0 += copy(
     src=[
         f"{bundle}/runtime",
         f"{bundle}/mpich",
-        f"{bundle}/ucx",
+        f"{bundle}/libfabric",
         f"{bundle}/osu",
         f"{bundle}/rdma",
     ],
@@ -30,7 +30,7 @@ Stage0 += shell(
     commands=[
         "set -eux",
         f"test -x {prefix}/mpich/bin/mpiexec || test -x {prefix}/mpich/bin/mpicc",
-        f"test -d {prefix}/ucx || true",
+        f"test -d {prefix}/libfabric || true",
         f"test -x {prefix}/osu/bin/osu_bw || find {prefix}/osu -type f -name osu_bw -print -quit",
         f"test -d {prefix}/rdma || true",
     ]
@@ -38,8 +38,7 @@ Stage0 += shell(
 Stage0 += environment(
     variables={
         "CENAPAD_PREFIX": prefix,
-        "PATH": f"{prefix}/osu/bin:{prefix}/mpich/bin:{prefix}/ucx/bin:$PATH",
-        "LD_LIBRARY_PATH": f"{prefix}/mpich/lib:{prefix}/ucx/lib:{prefix}/rdma/lib:$LD_LIBRARY_PATH",
-        "UCX_TLS": "rc,ud,sm,self",
+        "PATH": f"{prefix}/osu/bin:{prefix}/mpich/bin:{prefix}/libfabric/bin:$PATH",
+        "LD_LIBRARY_PATH": f"{prefix}/mpich/lib:{prefix}/libfabric/lib:{prefix}/rdma/lib:$LD_LIBRARY_PATH",
     }
 )

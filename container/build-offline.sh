@@ -9,7 +9,7 @@ BASE_IMAGE="${BASE_IMAGE:?Defina BASE_IMAGE para uma base Ubuntu 24.04 local/apr
 FORMAT="${1:-singularity}"
 
 [[ -d "$BUNDLE_DIR" ]] || { echo "Bundle ausente: $BUNDLE_DIR" >&2; exit 1; }
-for component in runtime mpich ucx osu rdma; do
+for component in runtime mpich libfabric osu rdma; do
     [[ -d "$BUNDLE_DIR/$component" ]] || {
         echo "Componente ausente no bundle: $component" >&2
         exit 1

@@ -4,8 +4,8 @@ base_image=ubuntu-24.04.sif
 gcc_version=9.4.0
 mpich_version=4.1.1
 mpich_device=ch4
-mpich_netmod=ucx
-ucx_version=1.15.0
+mpich_netmod=ofi
+libfabric_version=1.18.0
 osu_version=7.5.2
 rdma_userspace=rdma-core-<VERSION>
 

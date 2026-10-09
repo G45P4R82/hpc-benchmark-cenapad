@@ -8,8 +8,8 @@ The cluster operator must prepare a local bundle with this layout:
 ```text
 offline-bundle/
 ├── runtime/   # Ubuntu 24.04 runtime packages or approved runtime files
-├── mpich/     # MPICH 4.1.1 built with CH4/UCX and GCC 9.4.0
-├── ucx/       # UCX 1.15.0 and its libraries
+├── mpich/     # MPICH 4.1.1 built with CH4/OFI and GCC 9.4.0
+├── libfabric/ # libfabric used by MPICH CH4:OFI
 ├── osu/       # OSU Micro-Benchmarks built with the same MPICH
 └── rdma/      # approved libibverbs, librdmacm and libmlx5 userspace files
 ```
