@@ -3,6 +3,9 @@
 *.img
 container/build/
 container/dist/
+container/offline-bundle/*
+!container/offline-bundle/README.md
+!container/offline-bundle/manifest.example.txt
 
 # Spack-generated installation trees
 spack/opt/

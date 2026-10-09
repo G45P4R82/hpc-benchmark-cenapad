@@ -41,3 +41,19 @@ apptainer build container/osu-mpich-ucx.sif container/Singularity.def
 
 Em ambientes sem privilégio, use o mecanismo de construção autorizado pelo
 cluster, como `--fakeroot` ou uma máquina de build aprovada.
+
+## Construção offline
+
+Para respeitar o requisito de usar somente artefatos existentes no CENAPAD,
+use `recipe-offline.py` e um `offline-bundle` fornecido pelo cluster. Essa
+receita não baixa imagens, pacotes ou fontes e não executa `apt-get`.
+
+```bash
+export BASE_IMAGE=/caminho/local/ubuntu-24.04.sif
+export OFFLINE_BUNDLE=/caminho/local/offline-bundle
+bash container/build-offline.sh singularity
+```
+
+Se Apptainer não estiver disponível na máquina local, o script gera
+`container/Singularity.offline.def`; transfira esse arquivo e o bundle para o
+cluster e execute a construção com a versão autorizada do Singularity.
