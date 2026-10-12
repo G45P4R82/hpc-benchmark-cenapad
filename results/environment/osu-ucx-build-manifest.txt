@@ -1,0 +1,55 @@
+source_sha256=618de3d0b1122f73a9229177d2da1e5cd62e431190580cb915f2605849cbbbdc  <cluster-home>/src/osu-micro-benchmarks-7.5.2.tar.gz
+prefix=<cluster-home>/opt/osu-7.5.2-mpich-4.1.1-ucx
+MPICH Version:      4.1.1
+MPICH Release date: Mon Mar  6 14:14:15 CST 2023
+MPICH ABI:          15:0:3
+MPICH Device:       ch4:ucx
+MPICH configure:    --prefix=<cluster-home>/opt/mpich-4.1.1-ucx --with-device=ch4:ucx --with-ucx=/opt/ohpc/pub/mpi/ucx-ohpc/1.15.0 --with-pm=hydra --enable-shared --enable-fast=O2
+MPICH CC:           gcc    -O2
+MPICH CXX:          g++   -O2
+MPICH F77:          gfortran   -O2
+MPICH FC:           gfortran   -O2
+
+gcc (GCC) 9.4.0
+Copyright (C) 2019 Free Software Foundation, Inc.
+This is free software; see the source for copying conditions.  There is NO
+warranty; not even for MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+
+gcc -I<cluster-home>/opt/mpich-4.1.1-ucx/include -L<cluster-home>/opt/mpich-4.1.1-ucx/lib -Wl,-rpath -Wl,<cluster-home>/opt/mpich-4.1.1-ucx/lib -Wl,--enable-new-dtags -lmpi
+# Library version: 1.15.0
+# Library path: /opt/ohpc/pub/mpi/ucx-ohpc/1.15.0/lib/libucs.so.0
+# API headers version: 1.15.0
+# Git branch '<unknown>', revision 0000000
+# Configured with: --prefix=/opt/ohpc/pub/mpi/ucx-ohpc/1.15.0 --disable-optimizations --disable-logging --disable-debug --disable-assertions --disable-params-check --libdir=/opt/ohpc/pub/mpi/ucx-ohpc/1.15.0/lib --enable-cma --without-cuda --without-gdrcopy --with-verbs --without-cm --without-knem --with-rdmacm --without-rocm --without-xpmem --without-ugni --without-java
+<cluster-home>/opt/osu-7.5.2-mpich-4.1.1-ucx/libexec/osu-micro-benchmarks/mpi/pt2pt/osu_bw
+	linux-vdso.so.1 (0x00007fff679e7000)
+	libpthread.so.0 => /lib64/libpthread.so.0 (0x000014969ab76000)
+	libmpicxx.so.12 => <cluster-home>/opt/mpich-4.1.1-ucx/lib/libmpicxx.so.12 (0x000014969a954000)
+	libmpi.so.12 => <cluster-home>/opt/mpich-4.1.1-ucx/lib/libmpi.so.12 (0x000014969811f000)
+	libstdc++.so.6 => /opt/ohpc/pub/compiler/gcc/9.4.0/lib64/libstdc++.so.6 (0x0000149697d3f000)
+	libm.so.6 => /lib64/libm.so.6 (0x00001496979bd000)
+	libgcc_s.so.1 => /opt/ohpc/pub/compiler/gcc/9.4.0/lib64/libgcc_s.so.1 (0x00001496977a5000)
+	libc.so.6 => /lib64/libc.so.6 (0x00001496973cf000)
+	/lib64/ld-linux-x86-64.so.2 (0x000014969ad96000)
+	libucp.so.0 => /opt/ohpc/pub/mpi/ucx-ohpc/1.15.0/lib/libucp.so.0 (0x00001496970ec000)
+	libucs.so.0 => /opt/ohpc/pub/mpi/ucx-ohpc/1.15.0/lib/libucs.so.0 (0x0000149696e89000)
+	librt.so.1 => /lib64/librt.so.1 (0x0000149696c81000)
+	libuct.so.0 => /opt/ohpc/pub/mpi/ucx-ohpc/1.15.0/lib/libuct.so.0 (0x0000149696a45000)
+	libucm.so.0 => /opt/ohpc/pub/mpi/ucx-ohpc/1.15.0/lib/libucm.so.0 (0x000014969682b000)
+	libdl.so.2 => /lib64/libdl.so.2 (0x0000149696627000)
+<cluster-home>/opt/osu-7.5.2-mpich-4.1.1-ucx/libexec/osu-micro-benchmarks/mpi/pt2pt/osu_latency
+	linux-vdso.so.1 (0x00007ffe063fb000)
+	libpthread.so.0 => /lib64/libpthread.so.0 (0x0000147eb561d000)
+	libmpicxx.so.12 => <cluster-home>/opt/mpich-4.1.1-ucx/lib/libmpicxx.so.12 (0x0000147eb53fb000)
+	libmpi.so.12 => <cluster-home>/opt/mpich-4.1.1-ucx/lib/libmpi.so.12 (0x0000147eb2bc6000)
+	libstdc++.so.6 => /opt/ohpc/pub/compiler/gcc/9.4.0/lib64/libstdc++.so.6 (0x0000147eb27e6000)
+	libm.so.6 => /lib64/libm.so.6 (0x0000147eb2464000)
+	libgcc_s.so.1 => /opt/ohpc/pub/compiler/gcc/9.4.0/lib64/libgcc_s.so.1 (0x0000147eb224c000)
+	libc.so.6 => /lib64/libc.so.6 (0x0000147eb1e76000)
+	/lib64/ld-linux-x86-64.so.2 (0x0000147eb583d000)
+	libucp.so.0 => /opt/ohpc/pub/mpi/ucx-ohpc/1.15.0/lib/libucp.so.0 (0x0000147eb1b93000)
+	libucs.so.0 => /opt/ohpc/pub/mpi/ucx-ohpc/1.15.0/lib/libucs.so.0 (0x0000147eb1930000)
+	librt.so.1 => /lib64/librt.so.1 (0x0000147eb1728000)
+	libuct.so.0 => /opt/ohpc/pub/mpi/ucx-ohpc/1.15.0/lib/libuct.so.0 (0x0000147eb14ec000)
+	libucm.so.0 => /opt/ohpc/pub/mpi/ucx-ohpc/1.15.0/lib/libucm.so.0 (0x0000147eb12d2000)
+	libdl.so.2 => /lib64/libdl.so.2 (0x0000147eb10ce000)
