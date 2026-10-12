@@ -1,0 +1,27 @@
+Warning: Permanently added the ED25519 host key for IP address '172.26.0.8' to the list of known hosts.
+Attaching 2952592 to 1028771.ada
+
+# OSU MPI Latency Test v7.5.2
+# Datatype: MPI_CHAR.
+# Size       Avg Latency(us)
+1                      33.06
+2                      21.95
+4                      20.73
+8                      16.21
+16                     16.08
+32                     16.01
+64                     16.11
+128                    15.63
+256                    18.56
+512                    33.99
+1024                   45.04
+2048                   37.93
+4096                   47.75
+8192                   40.04
+16384                  58.28
+32768                  56.52
+65536                  90.12
+131072                 98.62
+262144                143.64
+524288                239.36
+1048576               417.10
