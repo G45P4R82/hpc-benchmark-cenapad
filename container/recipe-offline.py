@@ -1,21 +1,13 @@
 #!/usr/bin/env python3
-"""Offline HPCCM recipe.
-
-All files under ``bundle`` must be supplied by the cluster operator. This
-recipe intentionally has no network access, package-manager calls, or URLs.
-"""
+"""Offline HPCCM recipe for the observed MPICH CH4:OFI environment."""
 from hpccm.primitives import baseimage, copy, environment, shell
 
 
-def arg(name, default):
-    return USERARG.get(name, default)
-
-
-base = arg("base", "ubuntu:24.04")
-bundle = arg("bundle", "container/offline-bundle")
+base = "ubuntu-24.04.sif"
+bundle = "/opt/cenapad/offline-bundle"
 prefix = "/opt/cenapad"
 
-Stage0 += baseimage(image=base)
+Stage0 += baseimage(image=base, _bootstrap="localimage", _docker_env=False)
 Stage0 += copy(
     src=[
         f"{bundle}/runtime",

@@ -1,67 +1,65 @@
-# Relatório: MPICH/UCX no Host e em Contêiner
+# Relatorio do piloto: host e container
 
-> Este relatório é um modelo. Substitua todos os campos entre colchetes por
-> dados coletados no cluster. Não declare que InfiniBand foi utilizado sem
-> evidência nos logs de UCX/RDMA.
+## Escopo
 
-## Resumo
+Este documento registra um piloto reproduzivel entre dois nos PBS do CENAPAD.
+Foram executadas tres repeticoes nativas e tres repeticoes em um container
+Ubuntu 24.04, usando OSU Micro-Benchmarks 7.5.2.
 
-Foram comparadas as execuções nativa e em contêiner dos benchmarks
-`osu_bw` e `osu_latency` em dois nós CPU do CENAPAD, com um processo MPI por
-nó e [N] repetições por cenário.
+O ambiente real disponivel usa MPICH 4.1.1 com `CH4:OFI` e libfabric. Ele nao
+corresponde ao alvo original `CH4:UCX`; essa diferenca e uma limitacao deste
+piloto e nao deve ser ocultada.
 
-## Ambiente
+## Configuracao
 
 | Item | Valor |
 |---|---|
-| Nós | [node0, node1] |
-| Sistema/kernel | [valor] |
-| CPU | [valor] |
-| GCC | [valor] |
-| Spack | [valor] |
-| MPICH | [valor] |
-| UCX | [valor] |
-| Mellanox OFED | [valor] |
-| Apptainer | [valor] |
-| OSU Micro-Benchmarks | [valor] |
-| Rede verificada | [evidência] |
+| Fila PBS | `paralela` |
+| Alocacao | 2 nos, `scatter:exclhost` |
+| Launcher | Hydra do MPICH, via `mpiexec` do modulo |
+| GCC | 9.4.0 |
+| MPICH | 4.1.1, `CH4:OFI` |
+| libfabric | 1.18.0 |
+| UCX observado | 1.15.0, nao usado como netmod do MPICH |
+| OSU | 7.5.2 |
+| Container | Ubuntu 24.04 SIF com bind dos artefatos do host |
+| Parametros | `-m 1:1048576 -x 10 -i 100` |
 
-## Procedimento
+## Resultados em 1 MiB
 
-Descrever a instalação Spack, a compilação do OSU, a receita HPCCM, a
-construção da imagem e o script PBS. Informar os parâmetros exatos do
-benchmark, a política de afinidade e os tamanhos de mensagem.
+| Cenário | Benchmark | Media | Desvio-padrao | Minimo | Maximo |
+|---|---|---:|---:|---:|---:|
+| Host | `osu_bw` | 3250.81 MB/s | 10.86 | 3239.02 | 3260.40 |
+| Container | `osu_bw` | 2842.40 MB/s | 590.40 | 2244.71 | 3425.24 |
+| Host | `osu_latency` | 410.16 us | 45.00 | 381.32 | 462.01 |
+| Container | `osu_latency` | 402.26 us | 32.05 | 365.48 | 424.21 |
 
-## Resultados
+A banda media do container foi 12.56% menor que a nativa. A latencia media
+do container foi 1.93% menor, dentro da variabilidade observada. A variacao
+da banda no container foi muito maior.
 
-![Largura de banda](../results/plots/bandwidth_comparison.png)
+Considerando 100 Gb/s como 12500 MB/s, os valores em 1 MiB correspondem a
+aproximadamente 26.01% do teorico no host e 22.74% no container. Essa
+comparacao e apenas uma referencia: protocolo, libfabric, PCIe, NUMA,
+afinidade, memoria, firmware e congestionamento influenciam o resultado.
 
-![Latência](../results/plots/latency_comparison.png)
+## Graficos e dados
 
-As tabelas completas estão em `results/processed/measurements.csv` e
-`results/processed/summary.csv`.
+- `results/processed/summary.csv` contem as medias e a variabilidade.
+- `results/processed/measurements.csv` contem as medidas individuais.
+- Os graficos deste piloto estao em `results/plots/` quando a biblioteca
+  grafica estiver disponivel no ambiente de analise.
 
-## Análise
+## Limitacoes
 
-- Maior largura de banda: [valor] MB/s.
-- Percentual de 100 Gb/s: [valor] %.
-- Tamanho a partir do qual a largura de banda estabiliza: [valor] bytes.
-- Diferença host/contêiner: [valor e interpretação].
-- Variabilidade entre repetições: [desvio-padrão ou intervalo].
+- O MPICH disponivel foi compilado como `CH4:OFI`, nao `CH4:UCX`.
+- O container nao e autocontido: MPICH, libfabric, RDMA e OSU foram montados
+  do host.
+- O teste com mensagens ate 64 MiB nao progrediu neste setup; por isso este
+  piloto foi limitado a 1 MiB.
+- A versao exata do MOFED nao foi observavel com a conta de usuario.
+- Nao ha afirmacao de que este piloto substitua o experimento completo
+  originalmente planejado.
 
-Usar a conversão `100 Gb/s = 12.500 MB/s` quando a saída estiver em MB/s
-decimal. Portanto, `percentual = MB/s / 125`. Explicar limitações causadas por
-protocolo, cabeçalhos, PCIe, NUMA, afinidade, memória, congestionamento,
-firmware e overhead de MPI/UCX.
-
-## Reprodutibilidade
-
-Listar os comandos executados e referenciar os arquivos versionados:
-
-- `spack/spack.yaml`;
-- `spack/spack.lock`;
-- `container/recipe.py`;
-- `container/Singularity.def`;
-- `pbs/run_benchmarks.pbs`;
-- logs completos em `results/raw/`;
-- diagnóstico do ambiente em `results/environment/`.
+Nenhuma imagem autocontida, instalacao Spack final ou resultado inexistente
+foi fabricado.
