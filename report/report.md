@@ -1,67 +1,145 @@
-# Relatório: MPICH/UCX no Host e em Contêiner
+# Relatorio do piloto HPC: host e container
 
-> Este relatório é um modelo. Substitua todos os campos entre colchetes por
-> dados coletados no cluster. Não declare que InfiniBand foi utilizado sem
-> evidência nos logs de UCX/RDMA.
+## Resumo executivo
 
-## Resumo
+Este relatorio apresenta um piloto reproduzivel de comunicacao MPI entre dois
+nos PBS do CENAPAD, comparando execucao nativa e em container. Foram
+executadas tres repeticoes de `osu_bw` e `osu_latency` em cada cenario.
 
-Foram comparadas as execuções nativa e em contêiner dos benchmarks
-`osu_bw` e `osu_latency` em dois nós CPU do CENAPAD, com um processo MPI por
-nó e [N] repetições por cenário.
+O ambiente institucional disponivel usa MPICH 4.1.1 com `CH4:OFI/libfabric`.
+O protocolo original previa `CH4:UCX`; por isso os resultados abaixo sao
+explicitamente classificados como um piloto OFI, nao como o experimento UCX
+completo.
 
-## Ambiente
+## Ambiente e reproducibilidade
 
 | Item | Valor |
 |---|---|
-| Nós | [node0, node1] |
-| Sistema/kernel | [valor] |
-| CPU | [valor] |
-| GCC | [valor] |
-| Spack | [valor] |
-| MPICH | [valor] |
-| UCX | [valor] |
-| Mellanox OFED | [valor] |
-| Apptainer | [valor] |
-| OSU Micro-Benchmarks | [valor] |
-| Rede verificada | [evidência] |
+| Sistema | AlmaLinux 8.10 |
+| CPU computacao | AMD EPYC 7443, 48 CPUs |
+| GCC | 9.4.0 |
+| MPICH | 4.1.1, `CH4:OFI/libfabric` |
+| libfabric | 1.18.0 |
+| UCX observado | 1.15.0, nao usado como netmod do MPICH OFI |
+| OSU | 7.5.2 |
+| PBS | 22.05.11 |
+| Fila | `paralela` |
+| Alocacao | 2 nos, `scatter:exclhost` |
+| Launcher | Hydra via `mpiexec` |
+| Singularity | 3.8.5-2.el8 |
+| Rede | InfiniBand HDR100, 100 Gb/s |
+
+Arquivos relevantes:
+
+- Receita HPCCM: `container/recipe-offline.py`.
+- Definicao gerada: `container/Singularity.offline.def`.
+- Spack: `spack/phase3-env/spack.yaml` e `spack/phase3-env/spack.lock`.
+- Script PBS do piloto: `pbs/run_pilot_benchmarks.pbs`.
+- Parser: `scripts/parse_osu.py`.
+- Graficos: `scripts/plot_results.py`.
+- Logs nativos: `results/raw/pilot-native-1028628/`.
+- Logs do container: `results/raw/pilot-container-1028771/`.
+- CSV combinado: `results/processed/summary.csv` e `results/processed/measurements.csv`.
 
 ## Procedimento
 
-Descrever a instalação Spack, a compilação do OSU, a receita HPCCM, a
-construção da imagem e o script PBS. Informar os parâmetros exatos do
-benchmark, a política de afinidade e os tamanhos de mensagem.
+Os jobs usaram dois nos PBS e tres repeticoes por benchmark. Os parametros do
+piloto foram:
+
+```text
+-m 1:1048576 -x 10 -i 100
+```
+
+O container foi uma base Ubuntu 24.04 SIF com MPICH, libfabric, RDMA e OSU
+montados explicitamente do host. Ele nao e uma imagem autocontida.
 
 ## Resultados
 
+### Largura de banda e latencia em 1 MiB
+
+| Cenario | Benchmark | Media | Desvio-padrao | Minimo | Maximo |
+|---|---|---:|---:|---:|---:|
+| Host | `osu_bw` | 3250.81 MB/s | 10.86 | 3239.02 | 3260.40 |
+| Container | `osu_bw` | 2842.40 MB/s | 590.40 | 2244.71 | 3425.24 |
+| Host | `osu_latency` | 410.16 us | 45.00 | 381.32 | 462.01 |
+| Container | `osu_latency` | 402.26 us | 32.05 | 365.48 | 424.21 |
+
 ![Largura de banda](../results/plots/bandwidth_comparison.png)
 
-![Latência](../results/plots/latency_comparison.png)
+![Latencia](../results/plots/latency_comparison.png)
 
-As tabelas completas estão em `results/processed/measurements.csv` e
-`results/processed/summary.csv`.
+## Analise
 
-## Análise
+### Influencia do tamanho da mensagem
 
-- Maior largura de banda: [valor] MB/s.
-- Percentual de 100 Gb/s: [valor] %.
-- Tamanho a partir do qual a largura de banda estabiliza: [valor] bytes.
-- Diferença host/contêiner: [valor e interpretação].
-- Variabilidade entre repetições: [desvio-padrão ou intervalo].
+Para mensagens pequenas, custos fixos de MPI, libfabric, protocolo e buffers
+dominam a transferencia. Conforme a mensagem cresce, esses custos sao
+amortizados e a largura de banda aumenta. A latencia fica relativamente
+estavel nas mensagens pequenas e cresce para mensagens maiores.
 
-Usar a conversão `100 Gb/s = 12.500 MB/s` quando a saída estiver em MB/s
-decimal. Portanto, `percentual = MB/s / 125`. Explicar limitações causadas por
-protocolo, cabeçalhos, PCIe, NUMA, afinidade, memória, congestionamento,
-firmware e overhead de MPI/UCX.
+No piloto, a largura de banda se aproxima da estabilizacao entre 512 KiB e
+1 MiB. A faixa acima de 1 MiB nao foi considerada neste piloto porque o
+`osu_bw` OFI nao progrediu de forma confiavel ate 64 MiB.
 
-## Reprodutibilidade
+### Maior largura de banda e percentual teorico
 
-Listar os comandos executados e referenciar os arquivos versionados:
+A maior medida observada foi no container, em 1 MiB:
 
-- `spack/spack.yaml`;
-- `spack/spack.lock`;
-- `container/recipe.py`;
-- `container/Singularity.def`;
-- `pbs/run_benchmarks.pbs`;
-- logs completos em `results/raw/`;
-- diagnóstico do ambiente em `results/environment/`.
+```text
+3425.24 MB/s
+```
+
+A conversao correta para 100 Gb/s e:
+
+```text
+100 Gb/s = 12.500 MB/s
+3425.24 / 12500 * 100 = 27.40%
+```
+
+A maior medida nativa foi `3260.40 MB/s`, equivalente a `26.08%` do limite
+teorico.
+
+### Host versus container
+
+A banda media do container foi aproximadamente `12.56%` menor que a nativa.
+A latencia media do container foi aproximadamente `1.93%` menor, uma diferenca
+pequena diante da variabilidade. A banda do container foi menos consistente:
+seu intervalo em 1 MiB foi `2244.71--3425.24 MB/s`, contra
+`3239.02--3260.40 MB/s` no host.
+
+### Distancia ao limite teorico
+
+A diferenca para 12.500 MB/s pode ser explicada por cabeçalhos e protocolos,
+overhead MPI/libfabric, provider OFI, PCIe, NUMA, afinidade, copias de
+memoria, congestionamento, carga dos nos, firmware, driver e variacao do
+scheduler. No container, binds de bibliotecas e o caminho adicional de
+execucao tambem podem aumentar a variabilidade.
+
+## Entregaveis
+
+- Receita HPCCM e definicao Singularity.
+- `spack.yaml` e `spack.lock` reais da tentativa de concretizacao.
+- Scripts PBS do piloto e do fluxo UCX.
+- Logs completos do piloto nativo e do container.
+- CSVs processados.
+- Graficos de largura de banda e latencia.
+- Script Python de processamento e graficos.
+
+## Limitacoes e trabalho futuro
+
+- O MPICH do piloto usa `CH4:OFI/libfabric`, nao `CH4:UCX`.
+- O SIF usa binds do host e nao e autocontido.
+- O piloto foi limitado a 1 MiB.
+- A versao exata do MOFED nao foi observavel com a conta de usuario.
+- Os jobs do experimento original UCX (`1029486.ada` e `1029489.ada`) ainda
+  aguardam recursos na fila `parexp`; seus resultados nao foram inventados.
+- Para o estudo original completo, e necessario executar esses jobs, processar
+  seus logs e substituir os resultados OFI deste piloto.
+
+## Conclusao
+
+O piloto confirmou execucao MPI nativa e em container entre dois nos e mostrou
+que o container teve banda media menor e variabilidade maior em 1 MiB. Os
+artefatos, logs, graficos e limitacoes estao registrados no repositorio. O
+resultado deve ser interpretado como piloto OFI reproduzivel, nao como a
+versao final do estudo CH4/UCX.

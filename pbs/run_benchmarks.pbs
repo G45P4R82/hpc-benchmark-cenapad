@@ -9,7 +9,8 @@ ROOT_DIR="${PROJECT_ROOT:?Defina PROJECT_ROOT antes de qsub}"
 RESULT_DIR="${RESULT_DIR:-${ROOT_DIR}/results/raw/job-${PBS_JOBID:-local}}"
 mkdir -p "$RESULT_DIR"
 
-MPIEXEC="${MPIEXEC:-mpiexec}"
+MPIEXEC="${MPIEXEC:-/opt/pbs/bin/mpiexec}"
+CONTAINER_RUNTIME="${CONTAINER_RUNTIME:-singularity}"
 MPIEXEC_EXTRA_ARGS="${MPIEXEC_EXTRA_ARGS:--f ${PBS_NODEFILE:-}}"
 OSU_BW="${OSU_BW:?Defina caminho para osu_bw nativo}"
 OSU_LATENCY="${OSU_LATENCY:?Defina caminho para osu_latency nativo}"
@@ -39,7 +40,7 @@ run_one() {
     local scenario="$1" benchmark="$2" repetition="$3" executable="$4" output="$5"
     local command_line
     if [[ "$scenario" == container ]]; then
-        command_line=("$MPIEXEC" "${EXTRA_ARGS[@]}" apptainer exec --bind "$CONTAINER_BINDS" "$CONTAINER_IMAGE" "$executable" $BENCHMARK_ARGS)
+        command_line=("$MPIEXEC" "${EXTRA_ARGS[@]}" "$CONTAINER_RUNTIME" exec --bind "$CONTAINER_BINDS" "$CONTAINER_IMAGE" "$executable" $BENCHMARK_ARGS)
     else
         command_line=("$MPIEXEC" "${EXTRA_ARGS[@]}" "$executable" $BENCHMARK_ARGS)
     fi

@@ -1,0 +1,32 @@
+#!/usr/bin/env bash
+#PBS -N osu-pilot
+#PBS -q paralela
+#PBS -l select=2:ncpus=128
+#PBS -l place=scatter:exclhost
+#PBS -j oe
+set -euo pipefail
+
+ROOT="${PROJECT_ROOT:?set PROJECT_ROOT}"
+OSU_PREFIX="${OSU_PREFIX:?set OSU_PREFIX}"
+IMAGE="${CONTAINER_IMAGE:?set CONTAINER_IMAGE}"
+MPIEXEC="${MPIEXEC:-$(command -v mpiexec)}"
+RESULT_DIR="${RESULT_DIR:-$ROOT/results/raw/pilot-${PBS_JOBID}}"
+mkdir -p "$RESULT_DIR" "$HOME/.ssh"
+chmod 700 "$HOME/.ssh"
+module load gcc/9.4.0
+module load mpich/4.1.1-gcc-9.4.0
+module load ucx/1.15.0
+for node in $(sort -u "$PBS_NODEFILE"); do
+    ssh-keygen -R "$node" >/dev/null 2>&1 || true
+    for ip in $(getent hosts "$node" | cut -d' ' -f1); do ssh-keygen -R "$ip" >/dev/null 2>&1 || true; done
+    ssh-keyscan -T 10 -H "$node" >> "$HOME/.ssh/known_hosts" 2>/dev/null
+done
+ARGS=(-m 1:1048576 -x 10 -i 100)
+LAT="$OSU_PREFIX/libexec/osu-micro-benchmarks/mpi/pt2pt/osu_latency"
+BW="$OSU_PREFIX/libexec/osu-micro-benchmarks/mpi/pt2pt/osu_bw"
+for rep in 01 02 03; do
+    "$MPIEXEC" -f "$PBS_NODEFILE" -n 2 -ppn 1 "$LAT" "${ARGS[@]}" > "$RESULT_DIR/native_latency_rep${rep}.out" 2>&1
+    "$MPIEXEC" -f "$PBS_NODEFILE" -n 2 -ppn 1 "$BW" "${ARGS[@]}" > "$RESULT_DIR/native_bw_rep${rep}.out" 2>&1
+    "$MPIEXEC" -f "$PBS_NODEFILE" -n 2 -ppn 1 singularity exec --bind /opt/pub,/opt/ohpc,/dev/infiniband "$IMAGE" "$LAT" "${ARGS[@]}" > "$RESULT_DIR/container_latency_rep${rep}.out" 2>&1
+    "$MPIEXEC" -f "$PBS_NODEFILE" -n 2 -ppn 1 singularity exec --bind /opt/pub,/opt/ohpc,/dev/infiniband "$IMAGE" "$BW" "${ARGS[@]}" > "$RESULT_DIR/container_bw_rep${rep}.out" 2>&1
+done

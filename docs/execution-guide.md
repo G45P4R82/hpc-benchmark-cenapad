@@ -73,6 +73,24 @@ Construa conforme a política do ambiente:
 apptainer build container/osu-mpich-ucx.sif container/Singularity.def
 ```
 
+### D.1 Fluxo offline aprovado
+
+Quando a política proibir downloads externos, não use a receita online
+`container/recipe.py`. O cluster deve fornecer o bundle descrito em
+`container/offline-bundle/README.md` e uma base Ubuntu 24.04 local/aprovada.
+Na máquina de build, execute:
+
+```bash
+export BASE_IMAGE=/caminho/ubuntu-24.04.sif
+export OFFLINE_BUNDLE=/caminho/offline-bundle
+bash container/build-offline.sh singularity
+```
+
+Se a máquina de build tiver somente Docker, gere
+`container/Dockerfile.offline`, mas não o considere um SIF. A construção final
+deve ocorrer em um host com Singularity/Apptainer autorizado. Nenhum `wget`,
+`curl`, `apt-get`, `pip` ou registry externo deve ser usado nesse fluxo.
+
 Teste a imagem antes do PBS:
 
 ```bash

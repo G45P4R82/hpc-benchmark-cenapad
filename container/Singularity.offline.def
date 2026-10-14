@@ -1,0 +1,28 @@
+BootStrap: localimage
+From: ubuntu-24.04.sif
+
+%files
+    /opt/cenapad/offline-bundle/runtime /opt/cenapad/
+    /opt/cenapad/offline-bundle/mpich /opt/cenapad/
+    /opt/cenapad/offline-bundle/libfabric /opt/cenapad/
+    /opt/cenapad/offline-bundle/osu /opt/cenapad/
+    /opt/cenapad/offline-bundle/rdma /opt/cenapad/
+
+%post
+    cd /
+    set -eux
+    test -x /opt/cenapad/mpich/bin/mpiexec || test -x /opt/cenapad/mpich/bin/mpicc
+    test -d /opt/cenapad/libfabric || true
+    test -x /opt/cenapad/osu/bin/osu_bw || find /opt/cenapad/osu -type f -name osu_bw -print -quit
+    test -d /opt/cenapad/rdma || true
+
+%environment
+    export CENAPAD_PREFIX=/opt/cenapad
+    export LD_LIBRARY_PATH=/opt/cenapad/mpich/lib:/opt/cenapad/libfabric/lib:/opt/cenapad/rdma/lib:$LD_LIBRARY_PATH
+    export PATH=/opt/cenapad/osu/bin:/opt/cenapad/mpich/bin:/opt/cenapad/libfabric/bin:$PATH
+%post
+    export CENAPAD_PREFIX=/opt/cenapad
+    export LD_LIBRARY_PATH=/opt/cenapad/mpich/lib:/opt/cenapad/libfabric/lib:/opt/cenapad/rdma/lib:$LD_LIBRARY_PATH
+    export PATH=/opt/cenapad/osu/bin:/opt/cenapad/mpich/bin:/opt/cenapad/libfabric/bin:$PATH
+
+

@@ -1,0 +1,15 @@
+#!/usr/bin/env bash
+#PBS -N build-osu
+#PBS -q testes
+#PBS -l select=1:ncpus=4
+#PBS -j oe
+
+set -euo pipefail
+
+ROOT_DIR="${PROJECT_ROOT:?Defina PROJECT_ROOT}"
+OSU_SOURCE_DIR="${OSU_SOURCE_DIR:?Defina OSU_SOURCE_DIR para fonte local já existente}"
+OSU_PREFIX="${OSU_PREFIX:?Defina OSU_PREFIX no seu HOME}"
+
+cd "$ROOT_DIR"
+export OSU_SOURCE_DIR OSU_PREFIX
+bash scripts/build_osu_cluster.sh
