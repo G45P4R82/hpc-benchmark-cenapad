@@ -117,13 +117,24 @@ execucao tambem podem aumentar a variabilidade.
 
 ## Entregaveis
 
-- Receita HPCCM e definicao Singularity.
-- `spack.yaml` e `spack.lock` reais da tentativa de concretizacao.
-- Scripts PBS do piloto e do fluxo UCX.
-- Logs completos do piloto nativo e do container.
-- CSVs processados.
-- Graficos de largura de banda e latencia.
-- Script Python de processamento e graficos.
+Todos os artefatos de entrega estao publicados neste repositorio:
+
+- [Receita HPCCM](https://github.com/G45P4R82/hpc-benchmark-cenapad/blob/main/container/recipe-offline.py).
+- [Definicao Singularity gerada](https://github.com/G45P4R82/hpc-benchmark-cenapad/blob/main/container/Singularity.offline.def).
+- [Spack environment](https://github.com/G45P4R82/hpc-benchmark-cenapad/blob/main/spack/phase3-env/spack.yaml).
+- [Spack lockfile](https://github.com/G45P4R82/hpc-benchmark-cenapad/blob/main/spack/phase3-env/spack.lock).
+- [Script PBS do piloto](https://github.com/G45P4R82/hpc-benchmark-cenapad/blob/main/pbs/run_pilot_benchmarks.pbs).
+- [Script PBS do protocolo UCX](https://github.com/G45P4R82/hpc-benchmark-cenapad/blob/main/pbs/run_ucx_benchmarks.pbs).
+- [Parser OSU](https://github.com/G45P4R82/hpc-benchmark-cenapad/blob/main/scripts/parse_osu.py).
+- [Script de graficos](https://github.com/G45P4R82/hpc-benchmark-cenapad/blob/main/scripts/plot_results.py).
+- [Logs nativos completos do piloto](https://github.com/G45P4R82/hpc-benchmark-cenapad/tree/main/results/raw/pilot-native-1028628).
+- [Logs completos do container do piloto](https://github.com/G45P4R82/hpc-benchmark-cenapad/tree/main/results/raw/pilot-container-1028771).
+- [Medidas individuais](https://github.com/G45P4R82/hpc-benchmark-cenapad/blob/main/results/processed/measurements.csv).
+- [Resumo processado](https://github.com/G45P4R82/hpc-benchmark-cenapad/blob/main/results/processed/summary.csv).
+- [Grafico de largura de banda](https://github.com/G45P4R82/hpc-benchmark-cenapad/blob/main/results/plots/bandwidth_comparison.png).
+- [Grafico de latencia](https://github.com/G45P4R82/hpc-benchmark-cenapad/blob/main/results/plots/latency_comparison.png).
+- [Relatorio em Markdown](https://github.com/G45P4R82/hpc-benchmark-cenapad/blob/main/report/report.md).
+- [Relatorio em PDF](https://github.com/G45P4R82/hpc-benchmark-cenapad/blob/main/report/report.pdf).
 
 ## Limitacoes e trabalho futuro
 
