@@ -136,6 +136,43 @@ Todos os artefatos de entrega estao publicados neste repositorio:
 - [Relatorio em Markdown](https://github.com/G45P4R82/hpc-benchmark-cenapad/blob/main/report/report.md).
 - [Relatorio em PDF](https://github.com/G45P4R82/hpc-benchmark-cenapad/blob/main/report/report.pdf).
 
+## Resultado do protocolo original CH4:UCX
+
+O job combinado `1030256.ada` foi executado em dois nos PBS (`adano02` e
+`adano19`) com MPICH 4.1.1 compilado como `CH4:UCX` e UCX 1.15.0.
+
+### Execucao nativa
+
+A execucao nativa iniciou corretamente e produziu os logs de tres repeticoes
+de `osu_latency` e `osu_bw`. Os logs completos estao em:
+
+- `results/raw/ucx-combined-1030256.ada/native_latency_rep01.out`
+- `results/raw/ucx-combined-1030256.ada/native_latency_rep02.out`
+- `results/raw/ucx-combined-1030256.ada/native_latency_rep03.out`
+- `results/raw/ucx-combined-1030256.ada/native_bw_rep01.out`
+- `results/raw/ucx-combined-1030256.ada/native_bw_rep02.out`
+- `results/raw/ucx-combined-1030256.ada/native_bw_rep03.out`
+
+### Execucao em container
+
+As tres tentativas no container falharam antes de produzir medidas validas.
+O UCX dentro do SIF nao conseguiu abrir o dominio verbs `mlx5_0` e informou
+que `rc`/`ud` nao estavam disponiveis. O processo abortou com erro de
+`MPI_Init` e `Destination is unreachable`.
+
+Esses arquivos de falha foram preservados em:
+
+- `results/raw/ucx-combined-1030256.ada/container_latency_rep01.out`
+- `results/raw/ucx-combined-1030256.ada/container_latency_rep02.out`
+- `results/raw/ucx-combined-1030256.ada/container_latency_rep03.out`
+- `results/raw/ucx-combined-1030256.ada/container_bw_rep01.out`
+- `results/raw/ucx-combined-1030256.ada/container_bw_rep02.out`
+- `results/raw/ucx-combined-1030256.ada/container_bw_rep03.out`
+
+Nao e correto substituir esses resultados por TCP. O container precisa de
+acesso funcional ao userspace RDMA/provider `mlx5` antes de produzir medidas
+comparaveis.
+
 ## Limitacoes e trabalho futuro
 
 - O MPICH do piloto usa `CH4:OFI/libfabric`, nao `CH4:UCX`.

@@ -1,0 +1,16 @@
+Attaching 2726278 to 1030256.ada
+[1792030986.533184] [adano02:998874:0]     ucp_context.c:1182 UCX  WARN  network device 'mlx5_0:1' is not available, please use one or more of: 'eno33np0'(tcp), 'eno33np0.1010'(tcp), 'ib0'(tcp), 'lo'(tcp)
+[1792030986.533199] [adano02:998874:0]     ucp_context.c:1182 UCX  WARN  transports 'rc','ud' are not available, please use one or more of: mm, posix, self, shm, sm, sysv, tcp
+[1792030986.903508] [adano19:2726344:0]     ucp_context.c:1182 UCX  WARN  network device 'mlx5_0:1' is not available, please use one or more of: 'eno33np0'(tcp), 'eno33np0.1010'(tcp), 'ib0'(tcp), 'lo'(tcp)
+[1792030986.903525] [adano19:2726344:0]     ucp_context.c:1182 UCX  WARN  transports 'rc','ud' are not available, please use one or more of: mm, posix, self, shm, sm, sysv, tcp
+[1792030986.906832] [adano19:2726344:0]          select.c:630  UCX  ERROR   no active messages transport to <no debug data>: self/memory - Destination is unreachable, sysv/memory - Destination is unreachable, posix/memory - Destination is unreachable
+[1792030986.906859] [adano02:998874:0]          select.c:630  UCX  ERROR   no active messages transport to <no debug data>: self/memory - Destination is unreachable, sysv/memory - Destination is unreachable, posix/memory - Destination is unreachable
+Abort(70898703) on node 1 (rank 1 in comm 0): Fatal error in internal_Init: Other MPI error, error stack:
+internal_Init(66).............: MPI_Init(argc=0x7ffe714348cc, argv=0x7ffe714348c0) failed
+MPII_Init_thread(257).........: 
+MPIR_init_comm_world(34)......: 
+MPIR_Comm_commit(770).........: 
+MPIR_Comm_commit_internal(558): 
+MPID_Comm_commit_pre_hook(158): 
+MPIDI_UCX_init_world(255).....: 
+initial_address_exchange(112).:  ucx function returned with failed status(ucx_init.c 112 initial_address_exchange Destination is unreachable)
