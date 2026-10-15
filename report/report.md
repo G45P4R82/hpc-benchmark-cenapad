@@ -184,6 +184,19 @@ comparaveis.
 - Para o estudo original completo, e necessario executar esses jobs, processar
   seus logs e substituir os resultados OFI deste piloto.
 
+## Evidencia adicional do bloqueio UCX no container
+
+A tentativa de executar UCX dentro do SIF Ubuntu 24.04 falhou antes de
+`MPI_Init` completar. O log registra `mlx5_0:1 is not available`, transports
+`rc`/`ud` indisponiveis e `Destination is unreachable`. O container somente
+expos interfaces TCP/memoria. Por isso, fallback TCP nao foi aceito como
+resultado InfiniBand. Os logs completos estao em
+`results/raw/ucx-combined-1030256.ada/` e o resumo sanitizado esta em
+[ucx-container-failure.md](https://github.com/G45P4R82/hpc-benchmark-cenapad/blob/main/results/environment/ucx-container-failure.md).
+
+Os jobs finais `1029486.ada` e `1029489.ada` ainda aguardam recursos na fila
+`parexp`; seus resultados nao foram inventados.
+
 ## Conclusao
 
 O piloto confirmou execucao MPI nativa e em container entre dois nos e mostrou
