@@ -197,6 +197,38 @@ resultado InfiniBand. Os logs completos estao em
 Os jobs finais `1029486.ada` e `1029489.ada` ainda aguardam recursos na fila
 `parexp`; seus resultados nao foram inventados.
 
+## Atualizacao dos jobs originais UCX
+
+O job nativo original `1032214.ada` terminou com `Exit_status=0` em dois nos
+PBS (`adano24` e `adano09`). Ele usou MPICH 4.1.1 compilado como `CH4:UCX`,
+UCX 1.15.0, OSU 7.5.2 e a faixa original ate 64 MiB com tres repeticoes.
+Os logs nativos completos estao em `results/raw/native-ucx-final-1032214/`.
+
+O job de container original `1032215.ada` terminou com `Exit_status=15`. O
+container iniciou, mas o UCX nao conseguiu abrir o dominio verbs `mlx5_0`;
+`rc`/`ud` ficaram indisponiveis e o processo falhou em `MPI_Init` com
+`Destination is unreachable`. Os logs completos estao em
+`results/raw/container-ucx-final-1032215/`. Esse resultado nao foi tratado
+como comunicacao InfiniBand valida.
+
+O relatorio agora distingue o resultado nativo UCX valido da falha de
+integracao UCX/RDMA no container. O piloto OFI anterior continua documentado
+separadamente.
+
+## Status final do protocolo original CH4:UCX
+
+O job nativo `1032214.ada` terminou com `Exit_status=0` em dois nos e gerou
+seis logs completos em [ucx-final-native-1032214](https://github.com/G45P4R82/hpc-benchmark-cenapad/tree/main/results/raw/ucx-final-native-1032214).
+
+O job contêiner `1032298.ada` terminou, mas falhou antes de produzir medidas:
+UCX nao encontrou o provider verbs `mlx5_0` dentro do SIF e abortou com
+`Destination is unreachable`. Os seis logs completos estao em
+[ucx-final-container-1032298](https://github.com/G45P4R82/hpc-benchmark-cenapad/tree/main/results/raw/ucx-final-container-1032298).
+
+Portanto, existe resultado nativo UCX valido, mas nao existe resultado
+comparavel de container UCX. A falha do container e uma evidencia do trabalho,
+nao um valor de desempenho. O relatorio nao substitui essa falha por TCP.
+
 ## Conclusao
 
 O piloto confirmou execucao MPI nativa e em container entre dois nos e mostrou

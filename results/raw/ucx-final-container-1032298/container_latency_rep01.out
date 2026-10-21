@@ -1,0 +1,17 @@
+Warning: Permanently added the ED25519 host key for IP address '172.26.0.18' to the list of known hosts.
+Attaching 3284193 to 1032298.ada
+[1792479112.048996] [adano18:3284290:0]     ucp_context.c:1182 UCX  WARN  network device 'mlx5_0:1' is not available, please use one or more of: 'eno33np0'(tcp), 'eno33np0.1010'(tcp), 'ib0'(tcp), 'lo'(tcp)
+[1792479112.049013] [adano18:3284290:0]     ucp_context.c:1182 UCX  WARN  transports 'rc','ud' are not available, please use one or more of: mm, posix, self, shm, sm, sysv, tcp
+[1792479112.050519] [adano19:677739:0]     ucp_context.c:1182 UCX  WARN  network device 'mlx5_0:1' is not available, please use one or more of: 'eno33np0'(tcp), 'eno33np0.1010'(tcp), 'ib0'(tcp), 'lo'(tcp)
+[1792479112.050540] [adano19:677739:0]     ucp_context.c:1182 UCX  WARN  transports 'rc','ud' are not available, please use one or more of: mm, posix, self, shm, sm, sysv, tcp
+[1792479112.054413] [adano18:3284290:0]          select.c:630  UCX  ERROR   no active messages transport to <no debug data>: self/memory - Destination is unreachable, sysv/memory - Destination is unreachable, posix/memory - Destination is unreachable
+[1792479112.054559] [adano19:677739:0]          select.c:630  UCX  ERROR   no active messages transport to <no debug data>: self/memory - Destination is unreachable, sysv/memory - Destination is unreachable, posix/memory - Destination is unreachable
+Abort(876205071) on node 1 (rank 1 in comm 0): Fatal error in internal_Init: Other MPI error, error stack:
+internal_Init(66).............: MPI_Init(argc=0x7ffc70c2811c, argv=0x7ffc70c28110) failed
+MPII_Init_thread(257).........: 
+MPIR_init_comm_world(34)......: 
+MPIR_Comm_commit(770).........: 
+MPIR_Comm_commit_internal(558): 
+MPID_Comm_commit_pre_hook(158): 
+MPIDI_UCX_init_world(255).....: 
+initial_address_exchange(112).:  ucx function returned with failed status(ucx_init.c 112 initial_address_exchange Destination is unreachable)
