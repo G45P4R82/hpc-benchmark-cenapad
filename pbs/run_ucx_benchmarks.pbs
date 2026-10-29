@@ -19,6 +19,9 @@ export LD_LIBRARY_PATH="$MPICH_PREFIX/lib:$UCX_PREFIX/lib:${LD_LIBRARY_PATH:-}"
 export UCX_TLS="${UCX_TLS:-rc,sm,self}"
 export UCX_NET_DEVICES="${UCX_NET_DEVICES:-mlx5_0:1}"
 export UCX_LOG_LEVEL="${UCX_LOG_LEVEL:-warn}"
+export SINGULARITYENV_LD_LIBRARY_PATH="$MPICH_PREFIX/lib:$UCX_PREFIX/lib:/opt/ohpc/pub/mpi/ucx-ohpc/1.15.0/lib"
+export SINGULARITYENV_UCX_TLS="$UCX_TLS"
+export SINGULARITYENV_UCX_NET_DEVICES="$UCX_NET_DEVICES"
 for node in $(sort -u "$PBS_NODEFILE"); do
     ssh-keygen -R "$node" >/dev/null 2>&1 || true
     for ip in $(getent hosts "$node" | cut -d' ' -f1); do ssh-keygen -R "$ip" >/dev/null 2>&1 || true; done
@@ -43,6 +46,6 @@ MPI_ENV=(-genv UCX_TLS "$UCX_TLS" -genv UCX_NET_DEVICES "$UCX_NET_DEVICES" -genv
 for rep in 01 02 03; do
     "$MPICH_PREFIX/bin/mpiexec" -f "$PBS_NODEFILE" -n 2 -ppn 1 "${MPI_ENV[@]}" "$OSU_PREFIX/libexec/osu-micro-benchmarks/mpi/pt2pt/osu_latency" "${ARGS[@]}" > "$RESULT_DIR/native_latency_rep${rep}.out" 2>&1
     "$MPICH_PREFIX/bin/mpiexec" -f "$PBS_NODEFILE" -n 2 -ppn 1 "${MPI_ENV[@]}" "$OSU_PREFIX/libexec/osu-micro-benchmarks/mpi/pt2pt/osu_bw" "${ARGS[@]}" > "$RESULT_DIR/native_bw_rep${rep}.out" 2>&1
-    "$MPICH_PREFIX/bin/mpiexec" -f "$PBS_NODEFILE" -n 2 -ppn 1 "${MPI_ENV[@]}" singularity exec --bind /opt/ohpc,/dev/infiniband "$CONTAINER_IMAGE" "$CONTAINER_OSU_PREFIX/libexec/osu-micro-benchmarks/mpi/pt2pt/osu_latency" "${ARGS[@]}" > "$RESULT_DIR/container_latency_rep${rep}.out" 2>&1
-    "$MPICH_PREFIX/bin/mpiexec" -f "$PBS_NODEFILE" -n 2 -ppn 1 "${MPI_ENV[@]}" singularity exec --bind /opt/ohpc,/dev/infiniband "$CONTAINER_IMAGE" "$CONTAINER_OSU_PREFIX/libexec/osu-micro-benchmarks/mpi/pt2pt/osu_bw" "${ARGS[@]}" > "$RESULT_DIR/container_bw_rep${rep}.out" 2>&1
+    "$MPICH_PREFIX/bin/mpiexec" -f "$PBS_NODEFILE" -n 2 -ppn 1 "${MPI_ENV[@]}" singularity exec --bind /opt/ohpc,/dev/infiniband,/etc/libibverbs.d,/etc/rdma "$CONTAINER_IMAGE" "$CONTAINER_OSU_PREFIX/libexec/osu-micro-benchmarks/mpi/pt2pt/osu_latency" "${ARGS[@]}" > "$RESULT_DIR/container_latency_rep${rep}.out" 2>&1
+    "$MPICH_PREFIX/bin/mpiexec" -f "$PBS_NODEFILE" -n 2 -ppn 1 "${MPI_ENV[@]}" singularity exec --bind /opt/ohpc,/dev/infiniband,/etc/libibverbs.d,/etc/rdma "$CONTAINER_IMAGE" "$CONTAINER_OSU_PREFIX/libexec/osu-micro-benchmarks/mpi/pt2pt/osu_bw" "${ARGS[@]}" > "$RESULT_DIR/container_bw_rep${rep}.out" 2>&1
 done
