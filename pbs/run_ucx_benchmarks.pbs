@@ -9,21 +9,40 @@ ROOT="${PROJECT_ROOT:?set PROJECT_ROOT}"
 MPICH_PREFIX="${MPICH_PREFIX:?set MPICH_PREFIX}"
 OSU_PREFIX="${OSU_PREFIX:?set OSU_PREFIX}"
 UCX_PREFIX="${UCX_PREFIX:?set UCX_PREFIX}"
+CONTAINER_OSU_PREFIX="${CONTAINER_OSU_PREFIX:-$OSU_PREFIX}"
 RESULT_DIR="${RESULT_DIR:-$ROOT/results/raw/ucx-${PBS_JOBID}}"
 mkdir -p "$RESULT_DIR" "$HOME/.ssh"
 chmod 700 "$HOME/.ssh"
 module load gcc/9.4.0
 export PATH="$MPICH_PREFIX/bin:$PATH"
 export LD_LIBRARY_PATH="$MPICH_PREFIX/lib:$UCX_PREFIX/lib:${LD_LIBRARY_PATH:-}"
+export UCX_TLS="${UCX_TLS:-rc,sm,self}"
+export UCX_NET_DEVICES="${UCX_NET_DEVICES:-mlx5_0:1}"
+export UCX_LOG_LEVEL="${UCX_LOG_LEVEL:-warn}"
 for node in $(sort -u "$PBS_NODEFILE"); do
     ssh-keygen -R "$node" >/dev/null 2>&1 || true
     for ip in $(getent hosts "$node" | cut -d' ' -f1); do ssh-keygen -R "$ip" >/dev/null 2>&1 || true; done
     ssh-keyscan -T 10 -H "$node" >> "$HOME/.ssh/known_hosts" 2>/dev/null
 done
-ARGS=(-m 1:67108864 -x 100 -i 1000)
+ARGS=(-m "${MESSAGE_RANGE:-1:67108864}" -x "${WARMUP:-100}" -i "${ITERATIONS:-1000}")
+
+{
+    date -u +%FT%TZ
+    printf 'PBS_NODEFILE=%s\nMPICH_PREFIX=%s\nUCX_PREFIX=%s\nOSU_PREFIX=%s\n' \
+        "$PBS_NODEFILE" "$MPICH_PREFIX" "$UCX_PREFIX" "$OSU_PREFIX"
+    printf 'UCX_TLS=%s\nUCX_NET_DEVICES=%s\nUCX_LOG_LEVEL=%s\n' \
+        "$UCX_TLS" "$UCX_NET_DEVICES" "$UCX_LOG_LEVEL"
+    mpichversion || true
+    ucx_info -v || true
+    ucx_info -d || true
+    fi_info || true
+    ldd "$OSU_PREFIX/libexec/osu-micro-benchmarks/mpi/pt2pt/osu_bw" || true
+} > "$RESULT_DIR/environment.txt" 2>&1
+
+MPI_ENV=(-genv UCX_TLS "$UCX_TLS" -genv UCX_NET_DEVICES "$UCX_NET_DEVICES" -genv UCX_LOG_LEVEL "$UCX_LOG_LEVEL")
 for rep in 01 02 03; do
-    "$MPICH_PREFIX/bin/mpiexec" -f "$PBS_NODEFILE" -n 2 -ppn 1 "$OSU_PREFIX/libexec/osu-micro-benchmarks/mpi/pt2pt/osu_latency" "${ARGS[@]}" > "$RESULT_DIR/native_latency_rep${rep}.out" 2>&1
-    "$MPICH_PREFIX/bin/mpiexec" -f "$PBS_NODEFILE" -n 2 -ppn 1 "$OSU_PREFIX/libexec/osu-micro-benchmarks/mpi/pt2pt/osu_bw" "${ARGS[@]}" > "$RESULT_DIR/native_bw_rep${rep}.out" 2>&1
-    "$MPICH_PREFIX/bin/mpiexec" -f "$PBS_NODEFILE" -n 2 -ppn 1 singularity exec --bind /opt/ohpc,/dev/infiniband "$CONTAINER_IMAGE" "$OSU_PREFIX/libexec/osu-micro-benchmarks/mpi/pt2pt/osu_latency" "${ARGS[@]}" > "$RESULT_DIR/container_latency_rep${rep}.out" 2>&1
-    "$MPICH_PREFIX/bin/mpiexec" -f "$PBS_NODEFILE" -n 2 -ppn 1 singularity exec --bind /opt/ohpc,/dev/infiniband "$CONTAINER_IMAGE" "$OSU_PREFIX/libexec/osu-micro-benchmarks/mpi/pt2pt/osu_bw" "${ARGS[@]}" > "$RESULT_DIR/container_bw_rep${rep}.out" 2>&1
+    "$MPICH_PREFIX/bin/mpiexec" -f "$PBS_NODEFILE" -n 2 -ppn 1 "${MPI_ENV[@]}" "$OSU_PREFIX/libexec/osu-micro-benchmarks/mpi/pt2pt/osu_latency" "${ARGS[@]}" > "$RESULT_DIR/native_latency_rep${rep}.out" 2>&1
+    "$MPICH_PREFIX/bin/mpiexec" -f "$PBS_NODEFILE" -n 2 -ppn 1 "${MPI_ENV[@]}" "$OSU_PREFIX/libexec/osu-micro-benchmarks/mpi/pt2pt/osu_bw" "${ARGS[@]}" > "$RESULT_DIR/native_bw_rep${rep}.out" 2>&1
+    "$MPICH_PREFIX/bin/mpiexec" -f "$PBS_NODEFILE" -n 2 -ppn 1 "${MPI_ENV[@]}" singularity exec --bind /opt/ohpc,/dev/infiniband "$CONTAINER_IMAGE" "$CONTAINER_OSU_PREFIX/libexec/osu-micro-benchmarks/mpi/pt2pt/osu_latency" "${ARGS[@]}" > "$RESULT_DIR/container_latency_rep${rep}.out" 2>&1
+    "$MPICH_PREFIX/bin/mpiexec" -f "$PBS_NODEFILE" -n 2 -ppn 1 "${MPI_ENV[@]}" singularity exec --bind /opt/ohpc,/dev/infiniband "$CONTAINER_IMAGE" "$CONTAINER_OSU_PREFIX/libexec/osu-micro-benchmarks/mpi/pt2pt/osu_bw" "${ARGS[@]}" > "$RESULT_DIR/container_bw_rep${rep}.out" 2>&1
 done

@@ -24,6 +24,10 @@ O script usa `/opt/pbs/bin/mpiexec` e `singularity` por padrão, conforme o
 inventário do CENAPAD. Eles podem ser substituídos pelas variáveis `MPIEXEC` e
 `CONTAINER_RUNTIME`, sem alterar o restante do experimento.
 
+O fluxo UCX usa `pbs/run_ucx_benchmarks.pbs`. Antes de submetê-lo, defina
+`MPICH_PREFIX`, `UCX_PREFIX`, `OSU_PREFIX` e `CONTAINER_IMAGE`. O script registra
+`mpichversion`, `ucx_info`, `fi_info`, `ldd`, transportes e dispositivo UCX.
+
 ## Compilar OSU no cluster
 
 Não compile os binários nativos nesta máquina local: o cluster usa AlmaLinux,
